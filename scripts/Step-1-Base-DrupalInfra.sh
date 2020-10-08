@@ -33,7 +33,7 @@ echo "Creating Virtual Network"
 az network vnet create \
   --name $spokeVNet \
   --resource-group $rg \
-  --address-prefix $spokeVNetAddressPrefix \
+  --address-prefixes $spokeVNetAddressPrefix \
   --subnet-name $spokeAppSubnet \
   --subnet-prefix $spokeAppSubnetAddressPrefix
 
@@ -49,9 +49,9 @@ az network vnet subnet create \
   --name $spokeDBSubnet \
   --resource-group $rg \
   --vnet-name $spokeVNet \
+  --address-prefixes $spokeDBSubnetAddressPrefix
 
-
-
+echo "Set private endpoint network policy on DB subnet"
   az network vnet subnet update \
  --name $spokeDBSubnet \
  --resource-group $rg \

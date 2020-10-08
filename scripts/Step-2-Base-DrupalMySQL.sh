@@ -48,7 +48,8 @@ az mysql server replica create \
 
 # be sure to add --service-endpoints Microsoft.SQL while creating App subnet.
 
-# Create a private endpoint for the MySQL server in your Virtual Network:
+# Create a private endpoint for the MySQL server in your Virtual Network
+echo "Create a private endpoint for the MySQL server"
 az network private-endpoint create \
     --name myPrivateEndpoint \
     --resource-group $rg \
@@ -58,7 +59,8 @@ az network private-endpoint create \
     --group-id mysqlServer \
     --connection-name $privEndpointConnection
 
-#Create a Private DNS Zone for MySQL server domain and create an association link with the Virtual Network.  
+#Create a Private DNS Zone for MySQL server domain and create an association link with the Virtual Network.
+echo "Create Private DNS Zone for MySQL server"
 az network private-dns zone create --resource-group $rg \
    --name  "privatelink.mysql.database.azure.com"
 az network private-dns link vnet create --resource-group $rg \
@@ -66,15 +68,16 @@ az network private-dns link vnet create --resource-group $rg \
    --name MyDNSLink \
    --virtual-network $spokeVNet \
    --registration-enabled false
-#Query for the network interface ID 
- 
-networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
 
+#Query for the network interface ID
+echo "Query for network interface ID"
+ networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
+
+echo "Get private IP Address"
 az resource show --ids $networkInterfaceId --api-version 2019-04-01 -o json 
-# Copy the content for privateIPAddress and FQDN matching the Azure database for MySQL name 
+# Copy the content for private IPAddress and FQDN matching the Azure database for MySQL name 
 
-#Create DNS records 
+#Create DNS records
+echo "Create DNS records"
 az network private-dns record-set a create --name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg  
-az network private-dns record-set a add-record --record-set-name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg -a <Private IP Address of the private link>
-
-
+#az network private-dns record-set a add-record --record-set-name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg -a <Private IP Address of the private link>
