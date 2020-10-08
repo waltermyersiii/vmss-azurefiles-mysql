@@ -70,6 +70,9 @@ az network private-dns link vnet create --resource-group $rg \
  
 networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
 
+az resource show --ids $networkInterfaceId --api-version 2019-04-01 -o json 
+# Copy the content for privateIPAddress and FQDN matching the Azure database for MySQL name 
+
 #Create DNS records 
 az network private-dns record-set a create --name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg  
 az network private-dns record-set a add-record --record-set-name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg -a <Private IP Address of the private link>
