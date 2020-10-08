@@ -72,8 +72,8 @@ az vmss create \
   --admin-username $adminUsername \
   --ssh-key-values ~/.ssh/id_rsa.pub
 
-# Mount Azure file shares
-echo "Mount Azure file shares"
+# Mount Azure file shares and install additional software
+echo "Mount Azure file share and install additional software"
 az vmss extension set \
   --publisher Microsoft.Azure.Extensions \
   --version 2.0 \
