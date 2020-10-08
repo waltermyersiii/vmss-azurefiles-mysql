@@ -37,12 +37,6 @@ az network vnet create \
   --subnet-name $spokeAppSubnet \
   --subnet-prefix $spokeAppSubnetAddressPrefix
 
-echo "Add Service Endpoint to App Subnet"
-az network vnet subnet update  \
-  --resource-group $rg \
-  --name $spokeAppSubnet \
-  --vnet-name $spokeVNet \
-  --service-endpoints Microsoft.SQL
 
 echo "Add DB Subnet"
 az network vnet subnet create \
@@ -50,3 +44,10 @@ az network vnet subnet create \
   --resource-group $rg \
   --vnet-name $spokeVNet \
   --address-prefix $spokeDBSubnetAddressPrefix
+  
+  #Disable subnet private endpoint policies
+az network vnet subnet update \
+ --name $spokeDBSubnet \
+ --resource-group $rg \
+ --vnet-name $spokeVNet \
+ --disable-private-endpoint-network-policies true
