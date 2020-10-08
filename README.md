@@ -1,0 +1,1 @@
+# vmss-azurefiles-mysql
