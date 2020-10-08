@@ -46,13 +46,33 @@ az mysql server replica create \
 --source-server $mysqlprimary \
 --location $secondaryRegion
 
-# be sure to add --service-endpoints Microsoft.SQL while creating App subnet.
+#Create a private endpoint for the MySQL server in your Virtual Network:
+az network private-endpoint create \
+    --name myPrivateEndpoint \
+    --resource-group $rg \
+    --vnet-name $spokeVNet \
+    --subnet $spokeDBSubnet \
+    --private-connection-resource-id $(az resource show -g $rg -n $mysqlprimary --resource-type "Microsoft.DBforMySQL/servers" --query "id" -o tsv) \
+    --group-id mysqlServer \
+    --connection-name $privEndpointConnection
 
-# Create a VNet rule on the server to create service endpoint, only traffic from $spokeAppSubnet allowed to access SQL server.
-echo "Creating MySQL Service Endpoint"
-az mysql server vnet-rule create \
---name myRule \
---resource-group $rg \
---server-name $mysqlprimary \
---vnet-name $spokeVNet \
---subnet $spokeAppSubnet
+#Create a Private DNS Zone for MySQL server domain and create an association link with the Virtual Network.
+az network private-dns zone create --resource-group $rg \
+   --name  "privatelink.mysql.database.azure.com"
+az network private-dns link vnet create --resource-group $rg \
+   --zone-name  "privatelink.mysql.database.azure.com"\
+   --name MyDNSLink \
+   --virtual-network $spokeVNet \
+   --registration-enabled false
+
+#Query for the network interface ID  
+networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
+ 
+ 
+az resource show --ids $networkInterfaceId --api-version 2019-04-01 -o json 
+# Copy the content for privateIPAddress and FQDN matching the Azure database for MySQL name 
+ 
+ 
+#Create DNS records 
+az network private-dns record-set a create --name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg  
+az network private-dns record-set a add-record --record-set-name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg -a <Private IP Address of the private link>
