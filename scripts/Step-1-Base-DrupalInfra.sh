@@ -49,7 +49,7 @@ az network vnet subnet create \
   --name $spokeDBSubnet \
   --resource-group $rg \
   --vnet-name $spokeVNet \
- # --address-prefix $spokeDBSubnetAddressPrefix
+
 
 
   az network vnet subnet update \
