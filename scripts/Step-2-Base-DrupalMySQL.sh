@@ -74,7 +74,7 @@ az network private-dns link vnet create \
 
 #Query for the network interface ID
 echo "Query for network interface ID"
- networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
+networkInterfaceId=$(az network private-endpoint show --name myPrivateEndpoint --resource-group $rg --query 'networkInterfaces[0].id' -o tsv)
 
 echo "Get private IP Address"
 az resource show --ids $networkInterfaceId --api-version 2019-04-01 -o json 
