@@ -63,7 +63,10 @@ az network private-endpoint create \
 echo "Create Private DNS Zone for MySQL server"
 az network private-dns zone create --resource-group $rg \
    --name  "privatelink.mysql.database.azure.com"
-az network private-dns link vnet create --resource-group $rg \
+
+echo "Create private dns link"
+az network private-dns link vnet create \
+   --resource-group $rg \
    --zone-name  "privatelink.mysql.database.azure.com"\
    --name MyDNSLink \
    --virtual-network $spokeVNet \
