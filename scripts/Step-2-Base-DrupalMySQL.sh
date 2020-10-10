@@ -56,8 +56,8 @@ az network private-endpoint create \
     --vnet-name $spokeVNet \
     --subnet $spokeDBSubnet \
     --private-connection-resource-id $(az resource show -g $rg -n $mysqlprimary --resource-type "Microsoft.DBforMySQL/servers" --query "id" -o tsv) \
-    --group-id mysqlServer \
-    --connection-name $privEndpointConnection
+    --connection-name $privEndpointConnection \
+    --group-id mysqlServer
 
 #Create a Private DNS Zone for MySQL server domain and create an association link with the Virtual Network.
 echo "Create Private DNS Zone for MySQL server"
