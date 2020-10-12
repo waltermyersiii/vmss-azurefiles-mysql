@@ -21,8 +21,8 @@ adminPassword="tst909@@10"
 privEndpointConnection="mysqlprivendconn"
 
 # MySQL related parameters 
-mysqlprimary="drupalmysqlprimary"
-mysqlreplica1="drupalmysqlreplica1"
+mysqlprimary="drupalmysqlprimary904"
+mysqlreplica1="drupalmysqlreplica1904"
 
 # Create a resource group.
 echo "Creating Resource Group"
