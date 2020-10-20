@@ -83,8 +83,7 @@ az vmss extension set \
   --name CustomScript \
   --resource-group $rg \
   --vmss-name $scaleset \
-  --settings '{"fileUris":["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh","https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"],"commandToExecute":"./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && ./automate_nginx.sh"}' \
-  --debug
+  --settings '{"fileUris":["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh","https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"],"commandToExecute":"./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && ./automate_nginx.sh"}'
   
 # Create Jump Box
 az vm create \
