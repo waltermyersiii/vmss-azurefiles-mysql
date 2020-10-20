@@ -21,8 +21,8 @@ adminPassword="tst909@@10"
 privEndpointConnection="mysqlprivendconn"
 
 # MySQL related parameters 
-mysqlprimary="drupalmysqlprimary904"
-mysqlreplica1="drupalmysqlreplica1904"
+mysqlprimary="drupalmysqlprimary906"
+mysqlreplica1="drupalmysqlreplica1906"
 
 # Create a mySQL Server
 echo "Creating MySQL name $mysqlprimary in region $primaryRegion"
@@ -76,7 +76,6 @@ az resource show --ids $networkInterfaceId --api-version 2019-04-01 -o json
 echo "Create DNS records"
 az network private-dns record-set a create --name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg  
 #az network private-dns record-set a add-record --record-set-name myserver --zone-name privatelink.mysql.database.azure.com --resource-group $rg -a <Private IP Address of the private link>
-
 
 # Adding mySQL replica server in in secondaryRegion
 echo "Creating MySQL Replica $mysqlreplica1 in $secondaryRegion region"

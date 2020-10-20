@@ -11,6 +11,7 @@ spokeVNet="spokeVNet"
 spokeVNetAddressPrefix="10.0.0.0/16"
 spokeAppSubnet="spokeAppSubnet"
 spokeAppSubnetAddressPrefix="10.0.1.0/24"
+spokeAppSubnetPrivateIPAddress="10.0.1.4"
 spokeDBSubnet="spokeDBSubnet"
 spokeDBSubnetAddressPrefix="10.0.2.0/24"
 scaleset="drupalScaleSet"
@@ -21,8 +22,8 @@ adminPassword="tst909@@10"
 privEndpointConnection="mysqlprivendconn"
 
 # MySQL related parameters 
-mysqlprimary="drupalmysqlprimary907"
-mysqlreplica1="drupalmysqlreplica1907"
+mysqlprimary="drupalmysqlprimary906"
+mysqlreplica1="drupalmysqlreplica1906"
 
 # Create storage account for Azure file share
 echo "Creating storage account for Azure file share"
@@ -38,7 +39,7 @@ az storage account create \
     --sku Standard_LRS \
     --enable-large-file-share
 
-export shareName="data"
+export shareName="azurefilesshare"
 export mntPath="/mnt/$storageAccountName/$shareName"
 
 echo "Storage Account Name is" $storageAccountName
@@ -60,6 +61,48 @@ az storage share create \
     --name $shareName \
     --quota 1024
 
+# Create Egress-only Load Balancer
+az network public-ip create \
+    --resource-group $rg \
+    --name egressPIP \
+    --sku Standard
+
+az network lb create \
+  --resource-group $rg \
+  --name egressOnlyLB \
+  --frontend-ip-name egressFrontEndIP \
+  --sku Standard \
+  --public-ip-address egressPIP \
+  --backend-pool-name egressBackendPool
+
+# Create Internal Load Balancer
+az network lb create  \
+  --resource-group $rg \
+  --name $scalesetLB  \
+  --frontend-ip-name myFrontendIp \
+  --sku Standard \
+  --vnet-name $spokeVNet \
+  --subnet $spokeAppSubnet  
+
+#--private-ip-address $spokeAppSubnetPrivateIPAddress
+
+# az network lb frontend-ip create \
+#   --resource-group $rg \
+#   --name myFrontendIp \
+#   --lb-name $scalesetLB \
+#   --vnet-name $spokeVNet \
+#   --subnet $spokeAppSubnet
+
+az network lb inbound-nat-pool create \
+  --resource-group $rg \
+  --lb-name $scalesetLB \
+  --name myNatPool \
+  --protocol Tcp \
+  --frontend-port-range-start 80 \
+  --frontend-port-range-end 89 \
+  --backend-port 80 \
+  --frontend-ip-name myFrontendIp
+
 # Create VM Scale Set
 echo "Creating VM Scale Set"
 az vmss create \
@@ -71,7 +114,6 @@ az vmss create \
   --vnet-name $spokeVNet \
   --subnet $spokeAppSubnet \
   --lb $scalesetLB \
-  --public-ip-address scaleSetLBPublicIP \
   --admin-username $adminUsername \
   --ssh-key-values ~/.ssh/id_rsa.pub
 
@@ -83,8 +125,7 @@ az vmss extension set \
   --name CustomScript \
   --resource-group $rg \
   --vmss-name $scaleset \
-  --settings '{"fileUris":["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh","https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"],"commandToExecute":"./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && ./automate_nginx.sh"}' \
-  --debug
+  --settings '{"fileUris":["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh","https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"],"commandToExecute":"./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && ./automate_nginx.sh"}'
   
 # Create Jump Box
 az vm create \
