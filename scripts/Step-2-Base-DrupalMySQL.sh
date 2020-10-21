@@ -30,7 +30,7 @@ az mysql server create \
 --name $mysqlprimary \
 --resource-group $rg \
 --location $primaryRegion \
---admin-user myadmin \
+--admin-user $adminUsername \
 --admin-password $adminPassword \
 --assign-identity \
 --sku-name GP_Gen5_2 \

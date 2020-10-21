@@ -20,9 +20,12 @@ adminUsername="drupaladmin"
 adminPassword="tst909@@10"
 privEndpointConnection="mysqlprivendconn"
 
-# MySQL related parameters 
+# MySQL related parameters
+# Be sure to update mysqlFQDN based on MySQL script!!!
 mysqlprimary="drupalmysqlprimary907"
 mysqlreplica1="drupalmysqlreplica1907"
+mysqlFQDN="drupalmysqlprimary906.mysql.database.azure.com"
+mysqlNewDBName="n/a"
 
 # Create storage account for Azure file share
 echo "Creating storage account for Azure file share"
@@ -75,7 +78,7 @@ az vmss create \
   --admin-username $adminUsername \
   --ssh-key-values ~/.ssh/id_rsa.pub
 
-# Mount Azure file shares and install additional software
+# Mount Azure file shares and install Drupal 8 software
 echo "Mount Azure file share and install additional software"
 az vmss extension set \
   --publisher Microsoft.Azure.Extensions \
@@ -83,7 +86,8 @@ az vmss extension set \
   --name CustomScript \
   --resource-group $rg \
   --vmss-name $scaleset \
-  --settings '{"fileUris":["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh","https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"],"commandToExecute":"./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && ./automate_nginx.sh"}'
+  --settings '{"fileUris": ["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh", "https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/301-drupal8-vmss-glusterfs-mysql/scripts/install_drupal.sh"],"commandToExecute": "./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && sudo bash install_drupal.sh -u '$adminUsername' '-p' '$adminPassword' '-s' '$mysqlFQDN' '-n' '$adminUsername' '-P' '$adminPassword' '-k' '$mysqlNewDBName'"}' \
+  --debug
   
 # Create Jump Box
 az vm create \
