@@ -86,7 +86,7 @@ az vmss extension set \
   --name CustomScript \
   --resource-group $rg \
   --vmss-name $scaleset \
-  --settings '{"fileUris": ["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh", "https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/301-drupal8-vmss-glusterfs-mysql/scripts/install_drupal.sh"],"commandToExecute": "./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && sudo bash install_drupal.sh -u '$adminUsername' '-p' '$adminPassword' '-s' '$mysqlFQDN' '-n' '$adminUsername' '-P' '$adminPassword' '-k' '$mysqlNewDBName'"}' \
+  --settings '{"fileUris": ["https://raw.githubusercontent.com/waltermyersiii/azure-quickstart-templates/master/201-vmss-azure-files-linux/mountazurefiles.sh", "https://raw.githubusercontent.com/fazalraza1/azure-quickstart-templates/master/301-drupal8-vmss-glusterfs-mysql/scripts/install_drupal.sh"],"commandToExecute": "./mountazurefiles.sh '$storageAccountName' '$storageAccountKey' '$shareName' '$mntPath' '$adminUsername' && sudo bash install_drupal.sh -u '$adminUsername' '-p' '$adminPassword' '-s' '$mysqlFQDN' '-n' '$adminUsername' '-P' '$adminPassword' '-k' '$mysqlNewDBName'"}' \
   --debug
   
 # Create Jump Box
