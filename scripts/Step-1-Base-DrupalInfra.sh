@@ -19,6 +19,8 @@ instanceCount="2"
 adminUsername="drupaladmin"
 adminPassword="tst909@@10"
 privEndpointConnection="mysqlprivendconn"
+drupalKeyVault="waltermdrupalkv"
+drupalSecretName="drupalSecret1"
 
 # MySQL related parameters 
 mysqlprimary="drupalmysqlprimary906"
@@ -57,3 +59,10 @@ echo "Set private endpoint network policy on DB subnet"
  --resource-group $rg \
  --vnet-name $spokeVNet \
  --disable-private-endpoint-network-policies true
+
+# Setup Drupal ssh key
+ssh-keygen -t rsa -f drupal-rsa-key
+az keyvault create -l $primaryRegion -n $drupalKeyVault -g $rg --enabled-for-deployment true
+az keyvault secret set --vault-name $drupalKeyVault -n $drupalSecretName -f '~/.ssh/drupal-rsa-key'
+
+#az keyvault secret show --name $drupalSecretName --vault-name $drupalKeyVault
